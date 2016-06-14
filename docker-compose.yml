@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  proxy:
+    build: ./nginx
+    volumes:
+      - letsencrypt_certs:/etc/nginx/certs
+      - letsencrypt_www:/var/www/letsencrypt
+    links:
+      - app:letsencrypt.devsidestory.com
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+
+  letsencrypt:
+    build: ./certbot
+    command: /bin/true
+    volumes:
+      - letsencrypt_certs:/etc/letsencrypt
+      - letsencrypt_www:/var/www/letsencrypt
+
+  app:
+    image: dockercloud/hello-world
+    restart: always
+
+volumes:
+  letsencrypt_certs: ~
+  letsencrypt_www: ~
+
